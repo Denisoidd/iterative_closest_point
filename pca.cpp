@@ -18,6 +18,8 @@ void k_nearest_neighbour(const MatrixXd &V1,Eigen::MatrixXi &I, int k){
 
 
 void compute_normals(const MatrixXd &V1,const Eigen::MatrixXi &I, int k, MatrixXd &normals){
+    std::cout << "V1" << '\n';
+    std::cout << V1 << '\n';
     // compute the normals using PCA
     for (int j = 0; j < V1.rows(); j++){
       // local variable for neighbours coordinates
@@ -52,20 +54,22 @@ void compute_normals(const MatrixXd &V1,const Eigen::MatrixXi &I, int k, MatrixX
     //alignment
     for (int i = 0; i < V1.rows(); i++){
       MatrixXd norm1 = normals.row(i);
-      MatrixXd norm2 = normals.row(I(i, 1));
-      double scalar_product = norm1(0,0) * norm2(0,0) + norm1(0,1) * norm2(0,1) + norm1(0,2) * norm2(0,2);
-      if (scalar_product< 0.0d){
-        std::cout << "LESS" << '\n';
-        std::cout << "Normal before" << '\n';
-        std::cout << norm2 << '\n';
-        for (int j = 0; j < 3; j++){
-          normals(I(i, 1),j) = -norm2(0,j);
+      for (int t = 1; t < k; t++){
+
+        MatrixXd norm2 = normals.row(I(i, t));
+        double scalar_product = norm1(0,0) * norm2(0,0) + norm1(0,1) * norm2(0,1) + norm1(0,2) * norm2(0,2);
+        std::cout << "scalar_product is " << scalar_product << '\n';
+        if (scalar_product < 0.0d){
+          std::cout << "Normal before" << '\n';
+          std::cout << norm2 << '\n';
+          for (int j = 0; j < 3; j++){
+            std::cout << "What we will change?" << '\n';
+            std::cout << normals(I(i, t),j) << '\n';
+            normals(I(i, t),j) = -norm2(0,j);
+          }
+          std::cout << "Normal after" << '\n';
+          std::cout << normals.row(I(i, t)) << '\n';
         }
-        std::cout << "Normal after" << '\n';
-        std::cout << normals.row(I(i, 1)) << '\n';
-      }
-      else{
-        std::cout << "MORE" << '\n';
       }
     }
   }
