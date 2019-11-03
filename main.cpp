@@ -62,6 +62,40 @@ void ex1() {
   igl::readOFF("../data/star_rotated.off", V2, F2);
   igl::opengl::glfw::Viewer viewer;
   set_meshes(viewer);
+
+  // find a mean value for two sets of points
+  // VectorXd d = V2.colwise().mean().transpose();
+  // VectorXd m = V1.colwise().mean().transpose();
+  //
+  // //std::cout << "d size is " << d.rows() << " x " << d.cols() << '\n';
+  // // calculation deltas
+  // MatrixXd delta_d = V2;
+  // MatrixXd delta_m = V1;
+  //
+  // delta_d.rowwise() -= d.transpose();
+  // delta_m.rowwise() -= m.transpose();
+  //
+  // std::cout << "Size of delta m " << delta_m.rows() << " x " << delta_m.cols() << '\n';
+  // std::cout << "Size of delta d " << delta_d.rows() << " x " << delta_d.cols() << '\n';
+  // std::cout << "Correlation matrix is " << delta_m.transpose() * delta_d << '\n';
+  //
+  // JacobiSVD<MatrixXd> svd(delta_m.transpose() * delta_d, ComputeThinU | ComputeThinV);
+  // std::cout << "Singular values" << svd.singularValues() << '\n';
+  // std::cout << "U left" << '\n';
+  // std::cout << svd.matrixU() << '\n';
+  // std::cout << "V right" << '\n';
+  // std::cout << svd.matrixV() << '\n';
+  // std::cout << "Print rotation" << '\n';
+  // MatrixXd rot = svd.matrixV() * svd.matrixU().transpose();
+  // std::cout << rot << '\n';
+  // VectorXd transl = d - rot * m;
+  // std::cout << "Size of V1 unchanged" << V1.rows() << " x " << V1.cols() << '\n';
+  // V1 = ((rot * V2.transpose()).colwise() + transl).transpose();
+  // std::cout << "Print V1 changed" << '\n';
+  // std::cout << "V1 size " << V1.rows() << " x " << V1.cols() << '\n';
+  // std::cout << V1 << '\n';
+
+
   viewer.launch();
 }
 
