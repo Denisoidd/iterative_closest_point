@@ -1,6 +1,7 @@
 #include "pca.h"
 #include <iostream>
 #include <ostream>
+#include <math.h>
 
 void k_nearest_neighbour(const MatrixXd &V1,Eigen::MatrixXi &I, int k){
   // need to get k nearest_neighbour indexes
@@ -18,7 +19,7 @@ void k_nearest_neighbour(const MatrixXd &V1,Eigen::MatrixXi &I, int k){
 
 void compute_normals(const MatrixXd &V1,const Eigen::MatrixXi &I, int k, MatrixXd &normals){
     // compute the normals using PCA
-    for (int j=0; j < V1.rows(); j++){
+    for (int j = 0; j < V1.rows(); j++){
       // local variable for neighbours coordinates
       MatrixXd neighb_points = MatrixXd::Zero(3,k);
       // points in neighbourhood
@@ -41,5 +42,30 @@ void compute_normals(const MatrixXd &V1,const Eigen::MatrixXi &I, int k, MatrixX
       //Getting plane normal (the last column in U)
       int last_index = svd.matrixU().cols();
       normals.row(j) = svd.matrixU().transpose().row(last_index - 1);
+
+      //Normalisation
+      double norm = sqrt(std::pow(normals(j,0),2) + std::pow(normals(j,1),2) + std::pow(normals(j,2),2));
+      for (int i = 0; i < 3; i++){
+        normals(j,i) /= norm;
+      }
+    }
+    //alignment
+    for (int i = 0; i < V1.rows(); i++){
+      MatrixXd norm1 = normals.row(i);
+      MatrixXd norm2 = normals.row(I(i, 1));
+      double scalar_product = norm1(0,0) * norm2(0,0) + norm1(0,1) * norm2(0,1) + norm1(0,2) * norm2(0,2);
+      if (scalar_product< 0.0d){
+        std::cout << "LESS" << '\n';
+        std::cout << "Normal before" << '\n';
+        std::cout << norm2 << '\n';
+        for (int j = 0; j < 3; j++){
+          normals(I(i, 1),j) = -norm2(0,j);
+        }
+        std::cout << "Normal after" << '\n';
+        std::cout << normals.row(I(i, 1)) << '\n';
+      }
+      else{
+        std::cout << "MORE" << '\n';
+      }
     }
   }
